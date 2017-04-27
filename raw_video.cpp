@@ -49,7 +49,11 @@ cv::Mat RawVideo::getNextFrame(ColorSpace color_space) {
     if (_current_frame == _total_frames) {
         resetCounter();
     }
-    return loadFrame();
+    cv::Mat frame = loadFrame();
+    if (color_space == CS_YUV) {
+        cv::cvtColor(frame, frame, RGB2YUV);
+    }
+    return frame;
 }
 
 void RawVideo::resetCounter() {
