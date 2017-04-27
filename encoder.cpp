@@ -6,12 +6,13 @@
 
 #include <boost/program_options.hpp>
 namespace po = boost::program_options;
+using namespace cv;
+using namespace std;
 
 #include "include/raw_video.h"
 
 int main(int argc, char **argv) {
     int width, height;
-    float frame_rate;
     std::string filename;
     try { 
         po::options_description desc("A basic video player that plays raw rgb video");
@@ -19,7 +20,6 @@ int main(int argc, char **argv) {
             ("help", "display help message")
             ("width", po::value<int>(&width)->default_value(960), "the width of the video frame")
             ("height",po::value<int>(&height)->default_value(540), "the height of the video frame")
-            ("frame-rate", po::value<float>(&frame_rate)->default_value(25.0), "frame rate at which the video plays")
             ("input-file", po::value<std::string>(), "input video file")
         ;
         po::positional_options_description p;
@@ -43,13 +43,22 @@ int main(int argc, char **argv) {
         std::cerr << e.what() << std::endl;
         return 1;
     }
+
     RawVideo rawVideo(filename, width, height);
-    cv::namedWindow("Basic Video Player");
-    imshow("Basic Video Player", rawVideo.getNextFrame());
-    while (char c = cv::waitKey((int)(1000.0/frame_rate))) {
-        if (c == 'q' || c == 'Q') return 0;
-        imshow("Basic Video Player", rawVideo.getNextFrame());
+    namedWindow("Basic Video Player");
+    namedWindow("fgMask");
+    Mat fgMaskMOG2;
+    Mat curFrame;
+    Ptr<BackgroundSubtractor> pMOG2;
+    pMOG2 = cv::createBackgroundSubtractorMOG2(30);
+    cout<<123<<endl;
+    while(!rawVideo.isLastFrame()) {
+    cout<<456<<endl;
+        rawVideo.getNextFrame(curFrame);
+        pMOG2->apply(curFrame, fgMaskMOG2);
+        imshow("Basic Video Player", curFrame);
+        imshow("fgMask", fgMaskMOG2);
     }
-    
+    destroyAllWindows();
     return 0;
 }
