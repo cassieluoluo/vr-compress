@@ -50,5 +50,6 @@ int main(int argc, char **argv) {
         if (c == 'q' || c == 'Q') return 0;
         imshow("Basic Video Player", rawVideo.getNextFrame());
     }
+    
     return 0;
 }

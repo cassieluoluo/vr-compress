@@ -15,7 +15,7 @@
 
 #include <boost/filesystem.hpp>
 
-#include "raw_video.h"
+#include "include/raw_video.h"
 
 RawVideo::RawVideo(
     std::string filename,
