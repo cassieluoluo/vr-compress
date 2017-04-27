@@ -22,8 +22,9 @@ public:
     ~RawVideo();
     cv::Mat getFrame(int frame_id, ColorSpace color_space = CS_RGB);
     cv::Mat getFrame(std::string timestamp, ColorSpace color_space = CS_RGB);
-    cv::Mat getNextFrame(ColorSpace color_space = CS_RGB);
+    void getNextFrame(cv::Mat& frame);
     void resetCounter();
+    bool isLastFrame();
 
 private:
     static const int PRELOAD = 25;
@@ -36,5 +37,5 @@ private:
     std::ifstream _input_file;
     std::queue<cv::Mat> _buffer;    // possible optimization: use rotational array instead of queue
     unsigned char *_frame_buffer;
-    cv::Mat loadFrame(); // Load next frame based on _current_frame
+    void loadFrame(cv::Mat&); // Load next frame based on _current_frame
 };

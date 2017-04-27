@@ -45,10 +45,13 @@ int main(int argc, char **argv) {
     }
     RawVideo rawVideo(filename, width, height);
     cv::namedWindow("Basic Video Player");
-    imshow("Basic Video Player", rawVideo.getNextFrame());
+    cv::Mat curFrame;
+    rawVideo.getNextFrame(curFrame);
+    imshow("Basic Video Player", curFrame);
     while (char c = cv::waitKey((int)(1000.0/frame_rate))) {
         if (c == 'q' || c == 'Q') return 0;
-        imshow("Basic Video Player", rawVideo.getNextFrame());
+        rawVideo.getNextFrame(curFrame);
+        imshow("Basic Video Player", curFrame);
     }
     return 0;
 }
