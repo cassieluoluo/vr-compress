@@ -51,7 +51,7 @@ cv::Mat RawVideo::getNextFrame(ColorSpace color_space) {
     }
     cv::Mat frame = loadFrame();
     if (color_space == CS_YUV) {
-        cv::cvtColor(frame, frame, RGB2YUV);
+        cv::cvtColor(frame, frame, CV_RGB2YUV);
     }
     return frame;
 }
