@@ -49,11 +49,9 @@ void RawVideo::getNextFrame(cv::Mat& frame) {
     if (_current_frame == _total_frames) {
         resetCounter();
     }
-
     loadFrame(frame);
     _current_frame++;
     return;
-
 }
 
 void RawVideo::resetCounter() {
