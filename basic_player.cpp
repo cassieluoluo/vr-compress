@@ -8,6 +8,12 @@
 namespace po = boost::program_options;
 
 #include "include/raw_video.h"
+void mouse_callback(int event, int x, int y, int flag, void *param) {
+    std::cout << "Mouse callback called" << std::endl;
+    if (event == cv::EVENT_MOUSEMOVE) {
+        std::cout << "Mouse positon: (" << x << ", " << y << ")" << std::endl;
+    }
+}
 
 int main(int argc, char **argv) {
     int width, height;
@@ -45,6 +51,7 @@ int main(int argc, char **argv) {
     }
     RawVideo rawVideo(filename, width, height);
     cv::namedWindow("Basic Video Player");
+    cv::setMouseCallback("Basic Video Player", mouse_callback);
     cv::Mat curFrame;
     rawVideo.getNextFrame(curFrame);
     imshow("Basic Video Player", curFrame);
