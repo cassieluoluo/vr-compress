@@ -25,7 +25,7 @@ void Utils::divideImg8by8(const cv::Mat &img, std::vector<cv::Mat> &res) {
     return;
 }
 
-void Utils::calculateBlockSum(const std::vector<cv::Mat> &blocks, std::vector<int> &res) {
+void Utils::calculateBlocksSum(const std::vector<cv::Mat> &blocks, std::vector<int> &res) {
     res.clear();
     for(auto it = blocks.begin(); it != blocks.end(); it++) {
         int x = (int)cv::sum(*it.base())[0];
@@ -33,7 +33,22 @@ void Utils::calculateBlockSum(const std::vector<cv::Mat> &blocks, std::vector<in
     }
 }
 
-void Utils::calculateBlockDCT(const std::vector<cv::Mat> &blocks, std::vector<cv::Mat> &res) {
+void Utils::getColorFromBlock(const cv::Mat &block, cv::Mat &res, Color color) {
+    res = cv::Mat(8, 8, CV_32FC1);
+    for (int i = 0; i < 8; ++i) {
+        for (int j = 0; j < 8; ++j) {
+            res.at<float>(i, j) = block.at<cv::Vec3b>(i, j)[color];
+        }
+    }
+}
+
+void Utils::calculateBlockDCT(const cv::Mat &blocks, cv::Mat &res) {
+    cv::Mat tmp;
+    cv::dct(blocks, tmp, 0);
+    tmp.convertTo(res, CV_16S);
+}
+
+void Utils::calculateBlocksDCT(const std::vector<cv::Mat> &blocks, std::vector<cv::Mat> &res) {
     res.clear();
     for(auto it = blocks.begin(); it != blocks.end(); it++) {
         cv::Mat dctResult;
