@@ -3,8 +3,11 @@
 #include <string>
 
 #include <opencv2/opencv.hpp>
+#include <opencv2/highgui.hpp>
+#include <opencv2/video.hpp>
 
 #include <boost/program_options.hpp>
+
 namespace po = boost::program_options;
 using namespace cv;
 using namespace std;
@@ -45,20 +48,21 @@ int main(int argc, char **argv) {
     }
 
     RawVideo rawVideo(filename, width, height);
-    namedWindow("Basic Video Player");
-    namedWindow("fgMask");
-    Mat fgMaskMOG2;
-    Mat curFrame;
-    Ptr<BackgroundSubtractor> pMOG2;
-    pMOG2 = cv::createBackgroundSubtractorMOG2(30);
-    cout<<123<<endl;
-    while(!rawVideo.isLastFrame()) {
-    cout<<456<<endl;
+    cv::namedWindow("Basic Video Player");
+    cv::namedWindow("fgMaskMOG");
+    cv::Mat curFrame;
+    cv::Mat fgMaskMOG;
+    Ptr<BackgroundSubtractor> pMOG;
+    pMOG = cv::createBackgroundSubtractorMOG2();
+    // rawVideo.getNextFrame(curFrame);
+    // imshow("Basic Video Player", curFrame);
+    while (char c = cv::waitKey(1)) {
+        if (c == 'q' || c == 'Q') return 0;
+        if (rawVideo.isLastFrame()) rawVideo.resetCounter();
         rawVideo.getNextFrame(curFrame);
-        pMOG2->apply(curFrame, fgMaskMOG2);
         imshow("Basic Video Player", curFrame);
-        imshow("fgMask", fgMaskMOG2);
+        pMOG->apply(curFrame, fgMaskMOG);
+        imshow("fgMaskMOG", fgMaskMOG);
     }
-    destroyAllWindows();
     return 0;
 }

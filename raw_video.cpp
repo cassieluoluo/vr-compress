@@ -58,6 +58,7 @@ void RawVideo::getNextFrame(cv::Mat& frame) {
 
 void RawVideo::resetCounter() {
     _current_frame = 0;
+    _input_file.seekg(SEEK_SET);
 }
 
 bool RawVideo::isLastFrame() {
