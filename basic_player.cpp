@@ -6,12 +6,24 @@
 
 #include <boost/program_options.hpp>
 namespace po = boost::program_options;
-
 #include "include/raw_video.h"
+int mouse_x = 0;
+int mouse_y = 0;
+void mouse_callback(int  event, int  x, int  y, int  flag, void *param)
+{
+    
+    if (event == cv::EVENT_MOUSEMOVE) {
+        mouse_x = x;
+        mouse_y = y;
+        std::cout << "(" << x << ", " << y << ")" << std::endl;
+    }
+}
 
 int main(int argc, char **argv) {
     int width, height;
+    const std::string WINDOW_NAME = "Basic Video Player";
     float frame_rate;
+    bool pause = false;
     std::string filename;
     try { 
         po::options_description desc("A basic video player that plays raw rgb video");
@@ -44,14 +56,19 @@ int main(int argc, char **argv) {
         return 1;
     }
     RawVideo rawVideo(filename, width, height);
-    cv::namedWindow("Basic Video Player");
+    cv::namedWindow(WINDOW_NAME); 
+    cv::setMouseCallback(WINDOW_NAME, mouse_callback);
+
     cv::Mat curFrame;
     rawVideo.getNextFrame(curFrame);
-    imshow("Basic Video Player", curFrame);
+    imshow(WINDOW_NAME, curFrame);
     while (char c = cv::waitKey((int)(1000.0/frame_rate))) {
+        if (c == ' ') pause = !pause; 
         if (c == 'q' || c == 'Q') return 0;
-        rawVideo.getNextFrame(curFrame);
-        imshow("Basic Video Player", curFrame);
+        if (!pause) {
+            rawVideo.getNextFrame(curFrame);
+        }
+        imshow(WINDOW_NAME, curFrame);
     }
     return 0;
 }
