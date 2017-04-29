@@ -18,4 +18,6 @@ public:
     static void getColorFromBlock(const cv::Mat &block, cv::Mat &res, Color color);
     static void calculateBlockDCT(const cv::Mat &block, cv::Mat &res);
     static void calculateBlocksDCT(const std::vector<cv::Mat> &blocks, std::vector<cv::Mat> &res);
+    static void print_vector(std::vector<short> v);
+    static void print_mat(cv::Mat m);
 };

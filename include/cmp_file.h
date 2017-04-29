@@ -9,17 +9,19 @@
 
 class CmpFile {
 public:
-    CmpFile(std::string filename);  // read
-    CmpFile(std::string filename, int width, int height, int frame_rate);   // write
-    std::vector<CompressedBlock> getNextFrame();
+    CmpFile(std::string filename, int w = 960, int h = 540);  // read
+    //CmpFile(std::string filename, int width, int height, int frame_rate);   // write
+    std::vector<BlockFrame> getNextFrame();
     bool hasNextFrame();
-    void writeFrame(std::vector<CompressedBlock> frame);
-    static const unsigned short MAGIC_NUMBER = 0xABCD;
-    void finishWriting();
+    //void writeFrame(std::vector<CompressedBlock> frame);
+    //static const unsigned short MAGIC_NUMBER = 0xABCD;
+    //void finishWriting();
 
 private:
-    std::fstream file_stream;
-    CmpHeader cmp_header;
-    int frame_counter;
-    bool is_read;
+    std::ifstream file_stream;
+    int width;
+    int height;
+    //CmpHeader cmp_header;
+    //int frame_counter;
+    //bool is_read;
 };

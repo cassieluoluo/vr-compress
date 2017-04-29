@@ -21,10 +21,10 @@ add_executable(Encoder encoder.cpp raw_video.cpp utils.cpp)
 set_property(TARGET Encoder PROPERTY CXX_STANDARD 11)
 set_property(TARGET Encoder PROPERTY CXX_STANDARD_REQUIRED ON)
 
-add_executable(Decoder decoder.cpp cmp_block.cpp cmp_file.cpp)
+add_executable(Decoder decoder.cpp cmp_file.cpp utils.cpp)
 set_property(TARGET Decoder PROPERTY CXX_STANDARD 11)
 set_property(TARGET Decoder PROPERTY CXX_STANDARD_REQUIRED ON)
 
 target_link_libraries(BasicPlayer ${Boost_LIBRARIES} ${OpenCV_LIBS})
 target_link_libraries(Encoder ${Boost_LIBRARIES} ${OpenCV_LIBS})
-
+target_link_libraries(Decoder ${Boost_LIBRARIES} ${OpenCV_LIBS})

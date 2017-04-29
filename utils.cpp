@@ -56,3 +56,14 @@ void Utils::calculateBlocksDCT(const std::vector<cv::Mat> &blocks, std::vector<c
         res.push_back(cv::Mat(dctResult));
     }
 }
+
+void Utils::print_vector(std::vector<short> v) {
+    for (auto s : v) {
+        std::cout << s << ",";
+    }
+    std::cout << std::endl;
+}
+
+void Utils::print_mat(cv::Mat m) {
+    std::cout << m << std::endl;
+}
