@@ -14,11 +14,17 @@ find_package(Boost 1.55.0 COMPONENTS system filesystem program_options)
 
 include_directories(${Boost_INCLUDE_DIRS} ${OpenCV_INCLUDE_DIRS})
 add_executable(BasicPlayer basic_player.cpp raw_video.cpp)
-add_executable(Encoder encoder.cpp raw_video.cpp utils.cpp)
 set_property(TARGET BasicPlayer PROPERTY CXX_STANDARD 11)
-set_property(TARGET Encoder PROPERTY CXX_STANDARD 11)
 set_property(TARGET BasicPlayer PROPERTY CXX_STANDARD_REQUIRED ON)
+
+add_executable(Encoder encoder.cpp raw_video.cpp utils.cpp)
+set_property(TARGET Encoder PROPERTY CXX_STANDARD 11)
 set_property(TARGET Encoder PROPERTY CXX_STANDARD_REQUIRED ON)
+
+add_executable(Decoder decoder.cpp cmp_block.cpp cmp_file.cpp)
+set_property(TARGET Decoder PROPERTY CXX_STANDARD 11)
+set_property(TARGET Decoder PROPERTY CXX_STANDARD_REQUIRED ON)
+
 target_link_libraries(BasicPlayer ${Boost_LIBRARIES} ${OpenCV_LIBS})
 target_link_libraries(Encoder ${Boost_LIBRARIES} ${OpenCV_LIBS})
 

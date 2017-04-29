@@ -4,6 +4,7 @@
 #include <string>
 #include <vector>
 
+#include "cmp_block.h"
 #include "defs.h"
 
 class CmpFile {
@@ -14,6 +15,7 @@ public:
     bool hasNextFrame();
     void writeFrame(std::vector<CompressedBlock> frame);
     static const unsigned short MAGIC_NUMBER = 0xABCD;
+    void finishWriting();
 
 private:
     std::fstream file_stream;

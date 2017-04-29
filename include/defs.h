@@ -8,8 +8,6 @@ typedef struct tagCmpHeader {
     unsigned int num_frames;
 } CmpHeader;
 
-
-
 typedef struct tagBlockFrame {
     enum {
         BACKGROUND = 0x0,

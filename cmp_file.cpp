@@ -1,6 +1,7 @@
 #include <exception>
 #include <iostream>
-#include "cmp_file.h"
+
+#include "include/cmp_file.h"
 
 CmpFile::CmpFile(std::string filename) {
     is_read = true;
