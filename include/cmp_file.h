@@ -11,6 +11,7 @@ public:
     CmpFile(std::string filename);  // read
     CmpFile(std::string filename, int width, int height, int frame_rate);   // write
     std::vector<CompressedBlock> getNextFrame();
+    bool hasNextFrame();
     void writeFrame(std::vector<CompressedBlock> frame);
     static const unsigned short MAGIC_NUMBER = 0xABCD;
 
