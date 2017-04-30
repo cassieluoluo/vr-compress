@@ -66,6 +66,9 @@ int main(int argc, char **argv) {
         if (c == ' ') pause = !pause; 
         if (c == 'q' || c == 'Q') return 0;
         if (!pause) {
+            if (rawVideo.isLastFrame()) {
+                rawVideo.resetCounter();
+            }
             rawVideo.getNextFrame(curFrame);
         }
         imshow(WINDOW_NAME, curFrame);

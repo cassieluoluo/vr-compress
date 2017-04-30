@@ -1,20 +1,16 @@
 #include <iostream>
 #include <cstring>
 #include <vector>
-
 #include <opencv2/opencv.hpp>
 #include <opencv2/highgui.hpp>
 #include <opencv2/video.hpp>
-
 #include <boost/program_options.hpp>
 #include "include/utils.h"
 #include "include/defs.h"
-
+#include "include/raw_video.h"
 namespace po = boost::program_options;
 using namespace cv;
 using namespace std;
-
-#include "include/raw_video.h"
 
 void writeToFile(ofstream &fo, BlockFrame &bf, short *buf) {
     memcpy(&bf.coeff, buf, 64 * sizeof(short));
@@ -22,9 +18,8 @@ void writeToFile(ofstream &fo, BlockFrame &bf, short *buf) {
 }
 
 int main(int argc, char **argv) {
-    int width, height;
+    int width, height, motionThreshold;
     std::string filename;
-    int motionThreshold;
     try {
         po::options_description desc("A basic video player that plays raw rgb video");
         desc.add_options()

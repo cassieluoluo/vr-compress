@@ -46,9 +46,6 @@ cv::Mat RawVideo::getFrame(std::string timestamp, ColorSpace color_space) {
 }
 
 void RawVideo::getNextFrame(cv::Mat& frame) {
-    if (_current_frame == _total_frames) {
-        resetCounter();
-    }
     loadFrame(frame);
     _current_frame++;
     return;
@@ -66,7 +63,7 @@ bool RawVideo::isLastFrame() {
 void RawVideo::loadFrame(cv::Mat& frame) {
     for (int c = 0; c < 3; c++) {
         for (int i = 0; i < _frame_size; i++) {
-            _input_file.read((char *)_frame_buffer + i*3 + c, 1);
+            _input_file.read(reinterpret_cast<char *>(_frame_buffer) + i*3 + c, 1);
         }
     }
     frame = cv::Mat(cv::Size(_width, _height), CV_8UC3, _frame_buffer);

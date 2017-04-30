@@ -16,8 +16,8 @@ typedef struct tagBlockFrame {
         COLOR_GREEN = 0x4,
         COLOR_BLUE = 0x8,
     };
-    unsigned int row;
-    unsigned int col;
-    unsigned char type;
+    int row;
+    int col;
+    int type;
     short coeff[64];
 } BlockFrame;
