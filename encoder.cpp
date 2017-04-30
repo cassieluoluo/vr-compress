@@ -14,7 +14,6 @@ namespace po = boost::program_options;
 using namespace cv;
 using namespace std;
 
-int motionThreshold = 128*40;
 #include "include/raw_video.h"
 
 void writeToFile(ofstream &fo, BlockFrame &bf, short *buf) {
@@ -25,6 +24,7 @@ void writeToFile(ofstream &fo, BlockFrame &bf, short *buf) {
 int main(int argc, char **argv) {
     int width, height;
     std::string filename;
+    int motionThreshold;
     try {
         po::options_description desc("A basic video player that plays raw rgb video");
         desc.add_options()
@@ -32,6 +32,7 @@ int main(int argc, char **argv) {
             ("width", po::value<int>(&width)->default_value(960), "the width of the video frame")
             ("height",po::value<int>(&height)->default_value(540), "the height of the video frame")
             ("input-file", po::value<std::string>(), "input video file")
+            ("threshold,t", po::value<int>(&motionThreshold)->default_value(128*40), "threshold for motion vector");
         ;
         po::positional_options_description p;
         p.add("input-file",  -1);
@@ -57,9 +58,7 @@ int main(int argc, char **argv) {
 
     RawVideo rawVideo(filename, width, height);
     ofstream fout(filename + ".cmp", ios_base::binary);
-//    cv::namedWindow("Basic Video Player");
     cv::namedWindow("fgMaskMOG");
-    cv::namedWindow("motions");
     cv::Mat curFrame;
     cv::Mat fgMaskMOG;
     Ptr<BackgroundSubtractor> pMOG;

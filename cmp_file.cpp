@@ -23,9 +23,11 @@ std::vector<BlockFrame> CmpFile::getNextFrame() {
     std::vector<BlockFrame> frame;
     for (int row = 0; row < height; row += BLOCK_SIZE) {
         for (int col = 0; col < width; col += BLOCK_SIZE) {
-            BlockFrame block;
-            file_stream.read(reinterpret_cast<char *>(&block), sizeof(BlockFrame));
-            frame.push_back(block);
+            for (int ch = 0; ch < 3; ch++) {
+                BlockFrame block;
+                file_stream.read(reinterpret_cast<char *>(&block), sizeof(BlockFrame));
+                frame.push_back(block);
+            }
         }
     }
     return frame;
