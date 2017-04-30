@@ -64,6 +64,7 @@ int main(int argc, char **argv) {
     cv::Mat fgMaskMOG;
     Ptr<BackgroundSubtractor> pMOG;
     pMOG = cv::createBackgroundSubtractorMOG2(100, 50);
+    int counter = 0;
     while (char c = cv::waitKey(1)) {
         if (c == 'q') break;
         if (rawVideo.isLastFrame()) break;
@@ -74,8 +75,7 @@ int main(int argc, char **argv) {
         Utils::divideImg8by8(fgMaskMOG, blocks);
         vector<int> motions;
         Utils::calculateBlocksSum(blocks, motions);
-        Mat res;
-        curFrame.copyTo(res);
+        Utils::divideImg8by8(curFrame, blocks);
         auto it = motions.begin();
         auto bit = blocks.begin();
         for (unsigned int row = 0; row < fgMaskMOG.size().height; row += 8) {
@@ -86,11 +86,6 @@ int main(int argc, char **argv) {
                 blockFrame.row = row;
                 if (*it.base() > motionThreshold) {
                     blockFrame.type = BlockFrame::BACKGROUND;
-                    for (int i = 0; i < 4; ++i) {
-                        for (int j = 0; j < 8; ++j) {
-                            res.at<Vec3b>(row + i, col + j)[2] = 255;
-                        }
-                    }
                 } else {
                     blockFrame.type = BlockFrame::FOREGROUND;
                 }
@@ -119,7 +114,7 @@ int main(int argc, char **argv) {
                 bit++;
             }
         }
-        imshow("motions", res);
+        cout << counter++ << " frames" << endl;
     }
     fout.close();
     destroyAllWindows();
