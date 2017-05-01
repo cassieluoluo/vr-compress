@@ -10,8 +10,8 @@ Decoder::Decoder(std::string filename, int w, int h, int fgstep, int bgstep)
     int file_size = boost::filesystem::file_size(filename);
     int blocks_per_frame = (width / BLOCK_SIZE) * (height / BLOCK_SIZE);    // TODO should use math::ceiling
     total_frames = file_size / (blocks_per_frame * sizeof(BlockFrame) * 3);
-    std::cout << "Frame count=" << total_frames << std::endl;
     infile = std::ifstream(filename, std::ios_base::binary);
+    frame_count = 0;
 }
 
 cv::Mat Decoder::getNextFrame() {
@@ -24,7 +24,7 @@ cv::Mat Decoder::getNextFrame() {
         auto ch_blue = block2Mat(data[i + 2]);
         std::vector<cv::Mat> channels{ch_blue, ch_green, ch_red};
         cv::merge(channels, color_block);
-        color_block.copyTo(frame(cv::Rect(data[i].col, data[i].row, 8, 8)));
+        color_block.copyTo(frame(cv::Rect(data[i].col, data[i].row, BLOCK_SIZE, BLOCK_SIZE)));
     }
     return frame;
 }
@@ -46,13 +46,17 @@ cv::Mat Decoder::block2Mat(BlockFrame block) {
     }
     cv::Mat mb(data);
     mb.convertTo(mb, CV_32FC1);
-    mb = mb.reshape(0, 8);
+    mb = mb.reshape(0, BLOCK_SIZE);
     cv::idct(mb, mb);
     return mb;
 }
 
 std::vector<BlockFrame> Decoder::loadNextFrame() {
     const int BLOCK_SIZE = 8;
+    if (frame_count == total_frames - 1) {
+        frame_count = 0;
+        infile.seekg(SEEK_SET);
+    }
     std::vector<BlockFrame> frame;
     for (int row = 0; row < height; row += BLOCK_SIZE) {
         for (int col = 0; col < width; col += BLOCK_SIZE) {
@@ -64,6 +68,7 @@ std::vector<BlockFrame> Decoder::loadNextFrame() {
             }
         }
     }
+    frame_count++;
     return frame;
 }
 

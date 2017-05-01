@@ -24,9 +24,9 @@ int main(int argc, char **argv) {
         po::options_description desc("A basic video player that plays raw rgb video");
         desc.add_options()
             ("help", "display help message")
-            ("width", po::value<int>(&width)->default_value(960), "the width of the video frame")
-            ("height",po::value<int>(&height)->default_value(540), "the height of the video frame")
-            ("input-file", po::value<std::string>(), "input video file")
+            ("width,w", po::value<int>(&width)->default_value(960), "the width of the video frame")
+            ("height,h",po::value<int>(&height)->default_value(540), "the height of the video frame")
+            ("input-file,i", po::value<std::string>(), "input video file")
             ("threshold,t", po::value<int>(&motionThreshold)->default_value(128*40), "threshold for motion vector");
         ;
         po::positional_options_description p;
