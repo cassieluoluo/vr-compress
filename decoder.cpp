@@ -72,7 +72,3 @@ std::vector<BlockFrame> Decoder::loadNextFrame() {
     return frame;
 }
 
-void Decoder::setMousePosition(int event, int x, int y, int flag, void *param) {
-    mouse_x = x;
-    mouse_y = y;
-}

@@ -15,7 +15,6 @@ public:
     Decoder(std::string filename, int width, int height, int fgstep, int bgstep);
     cv::Mat getNextFrame();
     void toggleDebugMode(bool debug) { debug_mode = debug; }
-    static void setMousePosition(int event, int x, int y, int flag, void *param);
     static const int BLOCK_SIZE = 8;
     static const int ROI_SIZE = 32;
     static int mouse_x, mouse_y;

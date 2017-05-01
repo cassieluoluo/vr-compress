@@ -15,7 +15,19 @@
 #include "include/decoder.h"
 #include "include/utils.h"
 
+bool paused;
+
 namespace po = boost::program_options;
+
+void mouseCallback(int event, int x, int y, int flag, void *param) {
+    if (event == cv::EVENT_MOUSEMOVE) {
+        Decoder::mouse_x = x;
+        Decoder::mouse_y = y;
+    } else if (event == cv::EVENT_LBUTTONUP) {
+        std::cout << "mouse clicked" << std::endl;
+        paused = !paused;
+    }
+}
 
 int main(int argc, char **argv) {
     const std::string WINDOW_NAME = "VR Player";
@@ -71,16 +83,18 @@ int main(int argc, char **argv) {
     Decoder decoder(filename, width, height, foreground_step, background_step);
     decoder.toggleDebugMode(debug_mode);
     cv::namedWindow(WINDOW_NAME);
-    cv::setMouseCallback(WINDOW_NAME, Decoder::setMousePosition);
+    cv::setMouseCallback(WINDOW_NAME, mouseCallback);
     int count = 0;
     while (char c = cv::waitKey((int)(1000.0/frame_rate))) {
-        int row, col;
-        std::vector<BlockFrame> data;
         if (c == 'q') break;
-        auto frame = decoder.getNextFrame();
-        cv::imshow(WINDOW_NAME, frame);
-        std::cout << "frame " << count << std::endl;
-        count++;
+        if (!paused) {
+            int row, col;
+            std::vector<BlockFrame> data;
+            auto frame = decoder.getNextFrame();
+            cv::imshow(WINDOW_NAME, frame);
+            std::cout << "frame " << count << std::endl;
+            count++;
+        }
     }
     cv::destroyAllWindows();
     return 0;
