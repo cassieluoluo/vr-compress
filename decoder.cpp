@@ -1,6 +1,7 @@
 #include <vector>
 #include <boost/filesystem.hpp>
 #include "include/decoder.h"
+#include <omp.h>
 
 int Decoder::mouse_x;
 int Decoder::mouse_y;
@@ -17,12 +18,14 @@ Decoder::Decoder(std::string filename, int w, int h, int fgstep, int bgstep)
 cv::Mat Decoder::getNextFrame() {
     auto data = loadNextFrame();
     cv::Mat frame(cv::Size(width, height), CV_8UC3);
-    cv::Mat color_block(8, 8, CV_8UC3);
+
+#pragma omp parallel for num_threads(8)
     for (int i = 0; i < data.size(); i += 3) {
         auto ch_red = block2Mat(data[i]);
         auto ch_green = block2Mat(data[i + 1]);
         auto ch_blue = block2Mat(data[i + 2]);
         std::vector<cv::Mat> channels{ch_blue, ch_green, ch_red};
+        cv::Mat color_block(8, 8, CV_8UC3);
         cv::merge(channels, color_block);
         color_block.copyTo(frame(cv::Rect(data[i].col, data[i].row, BLOCK_SIZE, BLOCK_SIZE)));
     }
@@ -57,14 +60,16 @@ std::vector<BlockFrame> Decoder::loadNextFrame() {
         frame_count = 0;
         infile.seekg(SEEK_SET);
     }
-    std::vector<BlockFrame> frame;
+    //Pre-assign
+    std::vector<BlockFrame> frame(height / BLOCK_SIZE * width / BLOCK_SIZE * 3);
+    int count = 0;
     for (int row = 0; row < height; row += BLOCK_SIZE) {
         for (int col = 0; col < width; col += BLOCK_SIZE) {
             for (int ch = 0; ch < 3; ch++) {
                 BlockFrame block;
                 infile.read(reinterpret_cast<char *>(&block),
                     sizeof(BlockFrame));
-                frame.push_back(block);
+                frame[count++] = block;
             }
         }
     }
