@@ -8,7 +8,7 @@ int Decoder::mouse_y;
 Decoder::Decoder(std::string filename, int w, int h, int fgstep, int bgstep)
     : width(w), height(h), foreground_step(fgstep), background_step(bgstep) {
     int file_size = boost::filesystem::file_size(filename);
-    int blocks_per_frame = (width / BLOCK_SIZE) * (height / BLOCK_SIZE);    // TODO should use math::ceiling
+    int blocks_per_frame = ((width - 1) / BLOCK_SIZE + 1) * ((height - 1) / BLOCK_SIZE + 1);    // TODO should use math::ceiling
     total_frames = file_size / (blocks_per_frame * sizeof(BlockFrame) * 3);
     infile = std::ifstream(filename, std::ios_base::binary);
     frame_count = 0;
@@ -53,7 +53,7 @@ cv::Mat Decoder::block2Mat(BlockFrame block) {
 
 std::vector<BlockFrame> Decoder::loadNextFrame() {
     const int BLOCK_SIZE = 8;
-    if (frame_count == total_frames - 1) {
+    if (frame_count == total_frames) {
         frame_count = 0;
         infile.seekg(SEEK_SET);
     }
