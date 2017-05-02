@@ -13,6 +13,7 @@
 #include <boost/program_options.hpp>
 #include "include/defs.h"
 #include "include/decoder.h"
+#include <chrono>
 #include "include/utils.h"
 
 bool paused;
@@ -85,16 +86,23 @@ int main(int argc, char **argv) {
     cv::namedWindow(WINDOW_NAME);
     cv::setMouseCallback(WINDOW_NAME, mouseCallback);
     int count = 0;
-    while (char c = cv::waitKey((int)(1000.0/frame_rate))) {
+
+    auto start = std::chrono::high_resolution_clock::now();
+    while (int c = cv::waitKey(1)) {
         if (c == 'q') break;
         if (!paused) {
             int row, col;
             std::vector<BlockFrame> data;
             auto frame = decoder.getNextFrame();
             cv::imshow(WINDOW_NAME, frame);
-            std::cout << "frame " << count << std::endl;
-            count++;
+            std::cout << "frame " << count++ << ", ";
+
+            auto end = std::chrono::high_resolution_clock::now();
+            auto interval = std::chrono::duration_cast<std::chrono::microseconds>(end - start);
+            std::cout << "interval " << interval.count() / 1000.0 << "ms" << std::endl;
+            start = end;
         }
+
     }
     cv::destroyAllWindows();
     return 0;
