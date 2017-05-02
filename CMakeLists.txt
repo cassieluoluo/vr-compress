@@ -1,7 +1,9 @@
 cmake_minimum_required(VERSION 3.1.0 FATAL_ERROR)
 
-set(CMAKE_C_COMPILER gcc-6)
-set(CMAKE_CXX_COMPILER g++-6)
+if (APPLE)
+    set(CMAKE_C_COMPILER gcc-6)
+    set(CMAKE_CXX_COMPILER g++-6)
+endif(APPLE)
 
 project( VR_Compressor )
 
