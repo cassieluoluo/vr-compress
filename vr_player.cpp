@@ -48,10 +48,10 @@ int main(int argc, char **argv) {
             ("height,h",po::value<int>(&height)->default_value(544),
                 "the height of the video frame")
             ("foreground-step,m",
-                po::value<int>(&foreground_step)->default_value(1),
+                po::value<int>(&foreground_step)->default_value(8),
                 "quantization step size for foreground blocks")
             ("background-step,n",
-                po::value<int>(&background_step)->default_value(40),
+                po::value<int>(&background_step)->default_value(128),
                 "quantization step size for background blocks")
             ("frame-rate,r", po::value<float>(&frame_rate)->default_value(25.0),
                 "frame rate at which the video plays")
@@ -88,21 +88,22 @@ int main(int argc, char **argv) {
     int count = 0;
 
     auto start = std::chrono::high_resolution_clock::now();
-    while (int c = cv::waitKey(1)) {
-        if (c == 'q') break;
+    while (1) {
         if (!paused) {
             int row, col;
             std::vector<BlockFrame> data;
             auto frame = decoder.getNextFrame();
             cv::imshow(WINDOW_NAME, frame);
             std::cout << "frame " << count++ << ", ";
-
             auto end = std::chrono::high_resolution_clock::now();
             auto interval = std::chrono::duration_cast<std::chrono::microseconds>(end - start);
             std::cout << "interval " << interval.count() / 1000.0 << "ms" << std::endl;
             start = end;
         }
-
+        int c = cv::waitKey(1);
+        if (c == 'q') {
+            break;
+        }
     }
     cv::destroyAllWindows();
     return 0;

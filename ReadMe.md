@@ -9,10 +9,14 @@ The team members of this project are
 
 ## How to build
 To build this project, there are three prerequisites:
-* cmake
+* `cmake -DCMAKE_BUILD_TYPE=Release /path/to/src`
 * OpenCV Library
 * Boost C++ Library
 
 ### OpenCV Installation
 
 First download the latest OpenCV from its official website. 
+
+## OS X OpenMP Notice
+* `brew install gcc`
+* `brew install boost --cc=gcc-6`

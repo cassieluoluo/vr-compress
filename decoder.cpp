@@ -29,10 +29,11 @@ cv::Mat Decoder::getNextFrame() {
         cv::merge(channels, color_block);
         color_block.copyTo(frame(cv::Rect(data[i].col, data[i].row, BLOCK_SIZE, BLOCK_SIZE)));
     }
+
     return frame;
 }
 
-cv::Mat Decoder::block2Mat(BlockFrame block) {
+cv::Mat Decoder::block2Mat(BlockFrame& block) {
     std::vector<short> data(block.coeff, block.coeff + 64);
     bool in_roi = block.row - mouse_y > -ROI_SIZE
                && block.row - mouse_y <  ROI_SIZE
