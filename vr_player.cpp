@@ -33,6 +33,7 @@ void mouseCallback(int event, int x, int y, int flag, void *param) {
 int main(int argc, char **argv) {
     const std::string WINDOW_NAME = "VR Player";
     int width, height;
+    int roi_size;
     float frame_rate;
     bool debug_mode = false;
     int foreground_step, background_step;
@@ -55,6 +56,8 @@ int main(int argc, char **argv) {
                 "quantization step size for background blocks")
             ("frame-rate,r", po::value<float>(&frame_rate)->default_value(25.0),
                 "frame rate at which the video plays")
+            ("roi-size,s", po::value<int>(&roi_size)->default_value(32),
+                "Gaze control ROI size")
             ("debug-mode,d", po::bool_switch(&debug_mode),
                 "toggle debug mode")
         ;
@@ -81,27 +84,27 @@ int main(int argc, char **argv) {
         return 1;
     }
 
-    Decoder decoder(filename, width, height, foreground_step, background_step);
+    Decoder decoder(filename, width, height, foreground_step, background_step, roi_size);
     decoder.toggleDebugMode(debug_mode);
     cv::namedWindow(WINDOW_NAME);
     cv::setMouseCallback(WINDOW_NAME, mouseCallback);
     int count = 0;
-
-    auto start = std::chrono::high_resolution_clock::now();
+    double sum = 0.0;
     while (1) {
+        auto start = std::chrono::high_resolution_clock::now();
         if (!paused) {
-            int row, col;
-            std::vector<BlockFrame> data;
             auto frame = decoder.getNextFrame();
             cv::imshow(WINDOW_NAME, frame);
-            std::cout << "frame " << count++ << ", ";
-            auto end = std::chrono::high_resolution_clock::now();
-            auto interval = std::chrono::duration_cast<std::chrono::microseconds>(end - start);
-            std::cout << "interval " << interval.count() / 1000.0 << "ms" << std::endl;
-            start = end;
         }
-        int c = cv::waitKey(1);
+        auto end = std::chrono::high_resolution_clock::now();
+        auto interval = std::chrono::duration_cast<std::chrono::microseconds>(end - start);
+        double interval_f = interval.count() / 1000.0;
+        sum += interval_f;
+        printf("frame %d\tinterval %f ms\n", count++, interval_f);
+        int wait_time = interval_f > 35.0 ? 1 : (int)(40.0 - interval_f);
+        int c = cv::waitKey(wait_time);
         if (c == 'q') {
+            printf("average processing time = %f\n", sum / count);
             break;
         }
     }

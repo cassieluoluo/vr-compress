@@ -6,8 +6,8 @@
 int Decoder::mouse_x;
 int Decoder::mouse_y;
 
-Decoder::Decoder(std::string filename, int w, int h, int fgstep, int bgstep)
-    : width(w), height(h), foreground_step(fgstep), background_step(bgstep) {
+Decoder::Decoder(std::string filename, int w, int h, int fgstep, int bgstep, int roi)
+    : width(w), height(h), foreground_step(fgstep), background_step(bgstep), roi_size(roi) {
     int file_size = boost::filesystem::file_size(filename);
     int blocks_per_frame = ((width - 1) / BLOCK_SIZE + 1) * ((height - 1) / BLOCK_SIZE + 1);    // TODO should use math::ceiling
     total_frames = file_size / (blocks_per_frame * sizeof(BlockFrame) * 3);
@@ -35,10 +35,10 @@ cv::Mat Decoder::getNextFrame() {
 
 cv::Mat Decoder::block2Mat(BlockFrame& block) {
     std::vector<short> data(block.coeff, block.coeff + 64);
-    bool in_roi = block.row - mouse_y > -ROI_SIZE
-               && block.row - mouse_y <  ROI_SIZE
-               && block.col - mouse_x > -ROI_SIZE
-               && block.col - mouse_x <  ROI_SIZE;
+    bool in_roi = block.row - mouse_y > -roi_size
+               && block.row - mouse_y <  roi_size
+               && block.col - mouse_x > -roi_size
+               && block.col - mouse_x <  roi_size;
     if (in_roi) {
         if (debug_mode) return cv::Mat(BLOCK_SIZE, BLOCK_SIZE, CV_8UC1, cv::Scalar(255));
     } else if (block.type % 2 == 0) {

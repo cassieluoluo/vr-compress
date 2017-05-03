@@ -12,14 +12,14 @@
 #include "defs.h"
 class Decoder {
 public:
-    Decoder(std::string filename, int width, int height, int fgstep, int bgstep);
+    Decoder(std::string filename, int width, int height, int fgstep, int bgstep, int roi = 64);
     cv::Mat getNextFrame();
     void toggleDebugMode(bool debug) { debug_mode = debug; }
     static const int BLOCK_SIZE = 8;
-    static const int ROI_SIZE = 64;
     static int mouse_x, mouse_y;
 private:
     std::ifstream infile;
+    int roi_size;
     int width, height;
     int foreground_step, background_step;
     bool debug_mode;
