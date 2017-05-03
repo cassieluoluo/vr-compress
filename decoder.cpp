@@ -34,21 +34,21 @@ cv::Mat Decoder::getNextFrame() {
 }
 
 cv::Mat Decoder::block2Mat(BlockFrame& block) {
-    std::vector<short> data(block.coeff, block.coeff + 64);
+    // std::vector<short> data(block.coeff, block.coeff + 64);
     bool in_roi = block.row - mouse_y > -roi_size
                && block.row - mouse_y <  roi_size
                && block.col - mouse_x > -roi_size
                && block.col - mouse_x <  roi_size;
     if (in_roi) {
         if (debug_mode) return cv::Mat(BLOCK_SIZE, BLOCK_SIZE, CV_8UC1, cv::Scalar(255));
-    } else if (block.type % 2 == 0) {
+    } else if ((block.type & 1) == 0) {
         if (debug_mode) return cv::Mat(BLOCK_SIZE, BLOCK_SIZE, CV_8UC1, cv::Scalar(224));
-        quantize(data, foreground_step);
+        quantize(block.coeff, foreground_step);
     } else {
         if (debug_mode) return cv::Mat(BLOCK_SIZE, BLOCK_SIZE, CV_8UC1, cv::Scalar(32));
-        quantize(data, background_step);
+        quantize(block.coeff, background_step);
     }
-    cv::Mat mb(data);
+    cv::Mat mb(64, 1, CV_16S, block.coeff);
     mb.convertTo(mb, CV_32FC1);
     mb = mb.reshape(0, BLOCK_SIZE);
     cv::idct(mb, mb);

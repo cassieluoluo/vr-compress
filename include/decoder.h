@@ -26,8 +26,11 @@ private:
     int frame_count, total_frames;
     cv::Mat block2Mat(BlockFrame& block);
     std::vector<BlockFrame> loadNextFrame();
-    void quantize(std::vector<short>& data, int step) {
-        std::transform(data.begin(), data.end(), data.begin(),
-            [step](short val) { return (val / step) * step; });
+    void quantize(short *data, int step) {
+//        std::transform(data.begin(), data.end(), data.begin(),
+//            [step](short val) { return (val / step) * step; });
+        for (int i = 0; i < 64; ++i) {
+            data[i] = data[i] / step * step;
+        }
     }
 };
