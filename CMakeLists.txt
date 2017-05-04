@@ -1,10 +1,9 @@
 cmake_minimum_required(VERSION 3.1.0 FATAL_ERROR)
 
 if (APPLE)
-    set(CMAKE_C_COMPILER gcc-6)
-    set(CMAKE_CXX_COMPILER g++-6)
+    set(CMAKE_C_COMPILER /usr/local/bin/gcc-6)
+    set(CMAKE_CXX_COMPILER /usr/local/bin/g++-6)
 endif(APPLE)
-
 project( VR_Compressor )
 
 set(CMAKE_ARCHIVE_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/lib)
