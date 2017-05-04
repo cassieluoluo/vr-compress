@@ -25,7 +25,6 @@ void mouseCallback(int event, int x, int y, int flag, void *param) {
         Decoder::mouse_x = x;
         Decoder::mouse_y = y;
     } else if (event == cv::EVENT_LBUTTONUP) {
-        std::cout << "mouse clicked" << std::endl;
         paused = !paused;
     }
 }
@@ -54,7 +53,7 @@ int main(int argc, char **argv) {
             ("background-step,n",
                 po::value<int>(&background_step)->default_value(128),
                 "quantization step size for background blocks")
-            ("frame-rate,r", po::value<float>(&frame_rate)->default_value(25.0),
+            ("frame-rate,r", po::value<float>(&frame_rate)->default_value(30.0),
                 "frame rate at which the video plays")
             ("roi-size,s", po::value<int>(&roi_size)->default_value(32),
                 "Gaze control ROI size")
@@ -90,19 +89,24 @@ int main(int argc, char **argv) {
     cv::setMouseCallback(WINDOW_NAME, mouseCallback);
     int count = 0;
     double sum = 0.0;
+    float interval_i = 1000/frame_rate;
     while (1) {
         auto start = std::chrono::high_resolution_clock::now();
         if (!paused) {
             auto frame = decoder.getNextFrame();
             cv::imshow(WINDOW_NAME, frame);
+            count++;
         }
         auto end = std::chrono::high_resolution_clock::now();
         auto interval = std::chrono::duration_cast<std::chrono::microseconds>(end - start);
         double interval_f = interval.count() / 1000.0;
-        sum += interval_f;
-        printf("frame %d\tinterval %f ms\n", count++, interval_f);
-        int wait_time = interval_f > 35.0 ? 1 : (int)(40.0 - interval_f);
+        int wait_time = interval_f > interval_i*0.9 ? 1 : (int)(interval_i - interval_f);
         int c = cv::waitKey(wait_time);
+        auto process_end = std::chrono::high_resolution_clock::now();
+        interval = std::chrono::duration_cast<std::chrono::microseconds>(process_end - start);
+        auto interval_p = interval.count() / 1000.0;
+        sum += interval_p;
+        printf("Processing time=%f, average frame rate = %f.\n", interval_p, 1000.0/(sum/count));
         if (c == 'q') {
             printf("average processing time = %f\n", sum / count);
             break;
